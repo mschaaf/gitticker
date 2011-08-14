@@ -1,0 +1,3 @@
+bamboo.host: <host>
+bamboo.user: <username>
+bamboo.password: <password>
