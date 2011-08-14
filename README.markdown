@@ -17,11 +17,9 @@ TODO
 Bamboo Feed
 -----------
 
-copy 
-    lib/bamboo/bamboo.properties.template 
-
-to 
-    lib/babmboo/bamboo.properties
+copy bamboo properties
+ 
+    cp lib/bamboo/bamboo.properties.template lib/babmboo/bamboo.properties
 
 and complete the bamboo property file
 
