@@ -7,7 +7,7 @@ puts 'refresh in 1min...'
 
 scheduler = Rufus::Scheduler.start_new
 
-scheduler.every("1m") do
+scheduler.every("3m") do
   system("clear")
   ticker.tick
 

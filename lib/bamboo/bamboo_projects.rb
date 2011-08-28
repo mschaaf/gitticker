@@ -1,19 +1,22 @@
-class BambooProjects
+require_relative 'jsonable'
+require_relative 'bamboo_project'
 
-  def initialize
-    @bambooProjects = Hash.new
+class BambooProjects < Jsonable
+
+  def initialize(fetchedContent)
+    super
   end
 
-  def bambooProjects
-    @bambooProjects
+  def projects
+    projects = Array.new
+    @hashmap['projects']['project'].each { |project|
+      projects.push(BambooProject.new(project))
+    }
+    projects
   end
 
-  def addAndGetBambooProject(bambooProjectName)
-    unless @bambooProjects.has_key?(bambooProjectName)
-      @bambooProjects[bambooProjectName]=BambooProject.new(bambooProjectName)
-    end
-    #return the new created or existing bamboo project
-    @bambooProjects[bambooProjectName]
+  def self.urlThatDescribeMe
+    '/rest/api/latest/project.json?expand=projects.project.plans.plan'
   end
 
 end

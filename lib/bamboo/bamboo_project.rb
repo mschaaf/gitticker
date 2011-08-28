@@ -1,21 +1,20 @@
-require_relative 'nameable'
+require_relative 'hashable'
 require_relative 'bamboo_build_plan'
 
-class BambooProject < Nameable
+class BambooProject < Hashable
 
-  def initialize(name)
-    super
-    @buildPlans = Hash.new
+  def key
+    @hashmap['key']
   end
 
-  def addAndGetBambooBuildPlan(buildPlan)
-    unless @buildPlans.has_key?(buildPlan)
-      @buildPlans[buildPlan] = BambooBuildPlan.new(buildPlan)
-    end
-    @buildPlans[buildPlan]
+  def plans
+    plans = Array.new
+    @hashmap['plans']['plan'].each { |plan|
+      if(plan['enabled'])
+        plans.push(BambooBuildPlan.new(plan))
+      end
+    }
+    plans
   end
 
-  def buildPlans
-    @buildPlans
-  end
 end

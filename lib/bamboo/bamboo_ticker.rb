@@ -1,6 +1,8 @@
 require 'yaml'
 require_relative '../http/fetcher'
-require_relative 'bamboo_parser'
+require_relative 'bamboo_projects'
+require_relative 'bamboo_results'
+require_relative 'bamboo_result'
 require 'colorize'
 
 class BambooTicker
@@ -12,28 +14,43 @@ class BambooTicker
 
     #fetch content
     f = Fetcher.new
-    content = f.fetch(props['bamboo.host']+'/rest/api/latest/result.json') { |httpAuth|
-        httpAuth.auth(props['bamboo.user'], props['bamboo.password'])
+
+
+    resultsAsJson = f.fetch(props['bamboo.host'] + BambooResults.urlThatDescribeMe) { |httpAuth|
+                    httpAuth.auth(props['bamboo.user'], props['bamboo.password'])
     }
+    results = BambooResults.new(resultsAsJson)
 
-    #parse content
-    parser = BambooParser.new
-    projects = parser.parseJson(content)
+    projectsAsJson = f.fetch(props['bamboo.host'] + BambooProjects.urlThatDescribeMe) { |httpAuth|
+              httpAuth.auth(props['bamboo.user'], props['bamboo.password'])
+    }
+    b = BambooProjects.new(projectsAsJson)
 
-    #print out parsed content
-    projects.bambooProjects.each { |projectName, project|
-      printf("%-12s", projectName)
-      project.buildPlans.each { |planName, plan|
-        case plan.state
-          when 'Successful'
-          print plan.name.colorize(:green)+' '
-          when 'Failed'
-          print plan.name.colorize(:red)+' '
+    b.projects.each { |project|
+      puts project.key
+      puts '---------------------'
+      project.plans.each { |plan|
+
+        unless  results.result(project.key, plan.key).nil?
+          if(results.result(project.key, plan.key).isSuccessful)
+            print plan.key.colorize(:green)
+          else
+            print plan.key.colorize(:red)
+          end
+        else
+          plan.key
         end
+
+        if plan.isBuilding
+          print '*'.colorize(:cyan)
+        end
+
+        print ' '
       }
       puts ''
+      puts ''
     }
-
   end
+
 end
 

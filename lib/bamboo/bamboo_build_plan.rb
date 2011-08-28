@@ -1,13 +1,12 @@
-require_relative 'nameable'
+require_relative 'hashable'
 
-class BambooBuildPlan < Nameable
+class BambooBuildPlan < Hashable
 
-  def setState(state)
-    @state = state
+  def key
+    @hashmap['shortKey']
   end
 
-  def state
-    @state
+  def isBuilding
+    @hashmap['isBuilding']
   end
-
 end
